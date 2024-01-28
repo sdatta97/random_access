@@ -14,7 +14,7 @@
 echo "$SLURM_ARRAY_TASK_ID"
 
 module purge
-module load python/3.8
+module load python/intel/3.8.6
 
 python3 modified_mosely.py
 exit
