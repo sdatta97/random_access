@@ -181,7 +181,7 @@ for n in range(1, NUM_ITERATIONS + 1):
         if (ia < 385):
             vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * (V12[j][0][ia + m1 - 1] * adif + V12[j][0][ia - 1] * adif1)
         else:
-            vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * V12[j][0][ia]
+            vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * V12[j][0][ia-1]
         if vn > vmax:
             amax = a
             vmax = vn
