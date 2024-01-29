@@ -181,7 +181,7 @@ for n in range(1, NUM_ITERATIONS + 1):
         if (ia < 385):
             vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * (V12[j][0][ia + m1 - 1] * adif + V12[j][0][ia - 1] * adif1)
         else:
-            vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * V12[j][0][ia-1]
+            vn = ea * (1 + V0[i]) + a * ea * (1 + V1[j][0]) + (1 - ea - a * ea) * V12[j][0][384]
         if vn > vmax:
             amax = a
             vmax = vn
@@ -315,7 +315,7 @@ for n in range(1, NUM_ITERATIONS + 1):
             if (ibx < 385):
                 vn = (eb - (1 + x - b) * ex) * (V2[j][ibx - 1][0] * bxdif1 + V2[j][ibx + m1 - 1][0] * bxdif) + b * (eb - ex) * (1 + V1[j][ibx - 1] * bxdif1 + V1[j][ibx + m1 - 1] * bxdif) + (1 - (1 + b) * eb) * (V2[j][ib - 1][0] * bdif1 + V2[j][ib + m1 - 1][0] * bdif)
             else:
-                vn = (eb - (1 + x - b) * ex) * (V2[j][ibx - 1][0] * bxdif1 + V2[j][ibx + m1 - 1][0] * bxdif) + b * (eb - ex) * (1 + V1[j][ibx - 1]) + (1 - (1 + b) * eb) * (V2[j][ib - 1][0] * bdif1 + V2[j][ib + m1 - 1][0] * bdif)
+                vn = (eb - (1 + x - b) * ex) * (V2[j][ibx - 1][0] * bxdif1 + V2[j][ibx + m1 - 1][0] * bxdif) + b * (eb - ex) * (1 + V1[j][384]) + (1 - (1 + b) * eb) * (V2[j][ib - 1][0] * bdif1 + V2[j][ib + m1 - 1][0] * bdif)
             if vn > vmax:
                 vmax = vn
                 bmax = b
