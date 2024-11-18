@@ -12,7 +12,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include<math.h>
 int main() 
 	{
-		double  V0[2], V1[2][193], V2[2][295][295], V11[2][193][193],V12[2][193][193];	// Initilization of value arrays
+		double  V0[2], V1[2][193], V2[2][295][295], V11[2][193][193],V12[2][193][193], V22[2][193][193];					// Initilization of value arrays
 		double alph[193],beta[295][295]; 								// Intiliation of decision arrays
 
 		int NUM_ITERATIONS = 100;
@@ -46,6 +46,7 @@ int main()
 			for(k=0; k<193; k++) {
 				V12[1][j][k] = 0;
 				V11[1][j][k] = 0;
+				V22[1][j][k] = 0;	
 			}
 		}
 	
@@ -130,7 +131,6 @@ int main()
 					iby = l - (ib + 1)*m1;
 					ib = ib*m1 + 1;
 					vn = (eb-ey)*(1 + V1[j][iby-1]*dif + V1[j][iby-1+m1]*dif1) + (1 - eb)*V2[j][0][ib-1+m1]*dif; // From value expression of VS2(0,y) with linear interpolation
-					
 					if(ib==1) {
 						vn = (vn + (1-eb)*(1+V1[i][0])*bdif1)/(1-ey);				// Substituting value expression lim y -> 0 VS2(0,y) with linear interpolation
 					}
@@ -162,6 +162,8 @@ int main()
 			//Calculate V1[0] and alph[0]
 		
 			vmax = 0;
+			//vn = 1 + V0[j];
+			//vmax = vn;
 			//Coarse Search for a
 		
 			for(l=1;l<=193;l=l+m1) {
@@ -170,7 +172,7 @@ int main()
 			    if (a<0) continue;
 				//if (a>0) break;
 				ea = exp(-a);
-				vn = ea*(1+V0[j]) + a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][l-1];		// From value expression VS1(0)				
+				vn = ea*(1 + V0[j]) + (1-ea)*V22[j][0][l-1];			// From value expression VS1(0)
 				if(vn>vmax) {										// Update values leding to maximum value
 					amax = a;
 					vmax = vn;
@@ -192,14 +194,13 @@ int main()
 				dif1 = 1 - dif;
 				ia = ia*m1 + 1;
 			
-				vn = ea*(1+V0[j]) + a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][ia + m1 - 1]*adif;		// From value expression VS1(0) and interpolation
+				vn = ea*(1+V0[j]) + (1-ea)*V22[j][0][ia + m1 - 1]*adif;		// From value expression VS1(0) and interpolation
 				if(ia==1) {
-					//vn = vn + (1-ea)*(1 + V1[j][0])*adif1;					// Substituting value expression lim y -> 0 VS2(0,y) with linear interpolation 
-					vn = vn + (1-(1+a)*ea)*(1 + V12[j][0][ia-1])*adif1;					// Substituting value expression lim y -> 0 VS2(0,y) with linear interpolation 
+					vn = vn + (1-ea)*(1 + V1[j][0])*adif1;					// Substituting value expression lim y -> 0 VS2(0,y) with linear interpolation 
 				}
 			
 				if(ia>1) {
-					vn = vn + (1-(1+a)*ea)*(1 + V12[j][0][ia-1])*adif1;					// Substituting value expression lim y -> 0 VS2(0,y) with linear interpolation 
+					vn = vn + (1-ea)*V22[j][0][ia-1]*adif1;					// From value expression VS1(0) and interpolation
 				}
 			
 				if(vn>vmax) {
@@ -219,25 +220,28 @@ int main()
 			    printf("Neg xmin: %f\n", xmin);
 			}
 
-			//Calculate V11[0][y] and V12[0][y], y>0
+			//Calculate V22[0][y], V11[0][y] and V12[0][y], y>0
 			for(la = m2; la<=193; la = la+m1) {
 				a =(la-1)*del;
 				ea = exp(-a);
 				ea2 = exp(-0.5*a);
 				V12[i][0][la-1] = (ea2*(1-(1+a/2)*ea2)*V12[j][0][(la-1)/2] + 0.5*a*ea2*(1-ea2)*(1+V11[j][0][(la-1)/2])+ (1-(1+a/2)*ea2)*V12[j][0][(la-1)/2])/(1-(1+a)*ea);						// From value expression VS12(x)
 				V11[i][0][la-1] = (a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][la-1])/(1-ea);
+				V22[i][0][la-1] = (a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][la-1])/(1-ea);
 			}
 
-			//Calculate V11[x][0] and V12[x][0], x>0
+			//Calculate V22[x][0], V11[x][0] and V12[x][0], x>0
 			for(l = m2; la<=193; l = l+m1) {
 				x =(l-1)*del;
 				ex = exp(-x);
+				V22[i][l-1][0] = (1+V1[j][l-1]); 
 				V12[i][l-1][0] = 0.5*(V12[j][l-1][0]+1+V11[j][l-1][0]);						// From value expression VS12(x)
 				V11[i][l-1][0] = 1+V1[j][l-1];
 			}
 
 			V12[i][0][0] = 0.5*(V12[j][0][0]+1+V11[j][0][0]);						// From value expression VS12(0)
 			V11[i][0][0] = 1+V1[j][0];	
+			V22[i][0][0] = 1+V1[j][0]; 	
 			//Calculate V1[x] and alph[x]
 		
 			for(l=m2; l<=193; l=l+m1) {
@@ -260,7 +264,7 @@ int main()
 					}
 				
 					if(a>x) {
-						vn =  eax*V1[j][l-1]+(a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*V12[j][l-1][la-l];	
+						vn = x*ea*(1 + V0[j]) + (1-ex-x*ea)*V22[j][l-1][la-l];	
 					}
 				
 					if(vn>vmax) {
@@ -280,11 +284,11 @@ int main()
 				
 					if(a>x) {
 						aux = (a-x)/del1;								// Generating values for linear interpolation
-						iax = aux;
-						dif = aux-iax;
+						ia = aux;
+						dif = aux-ia;
 						dif1 = 1 - dif;
-						iax = iax*m1 + 1;
-						vn =  eax*V1[j][l-1]+(a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*(V12[j][l-1][iax-1]*dif1+V12[j][l-1][iax+m1-1]*dif); //From value expression VS1(x) and interpolation
+						ia = ia*m1 + 1;
+						vn = x*ea*(1+V0[j]) + (1-ex-x*ea)*(V22[j][l-1][ia-1]*dif1 + V22[j][l-1][ia+m1-1]*dif);		// From value expression VS1(x) and interpolation
 					}
 				
 					if(a<=x) {
@@ -316,7 +320,7 @@ int main()
     			}
 			}	
 
-			//Calculate V11[x][y] and V12[x][y]
+			//Calculate V22[x][y], V11[x][y] and V12[x][y]
 			for(l=m2; l<=193; l=l+m1) {		
 				x = (l-1)*del;
 				ex = exp(-x);
@@ -327,6 +331,7 @@ int main()
 					eax2 = exp(-0.5*(a-x));
 					V12[i][l-1][la-1] = (eax2*(1-(1+(a-x)/2)*eax2)*V12[j][l-1][(la-1)/2] + 0.5*(a-x)*eax2*(1-eax2)*(1+V11[j][l-1][(la-1)/2])+  (1-(1+(a-x)/2)*eax2)*V12[j][l-1][(la-1)/2])/(1-(1+a-x)*eax);						// From value expression VS12(x)
 					V11[i][l-1][la-1] = ((a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*V12[j][l-1][la-1])/(1-eax);
+					V22[i][l-1][la-1] = ((1-(1+x)*ex)*eax*V2[j][l-1][0] + (1-ex)*(a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*(1-ex)*V12[j][l-1][la-1])/(1-ex-x*ea);
 				}
 			}
 			//Calculate V2[0][0]
@@ -429,8 +434,7 @@ int main()
 							ibx = ib - k + 1;
 							// Value expression for V2(x,y) with interpolation
 							vn = x*(eb - exy)*(1 + V1[j][ibxy-1]*bdif + V1[j][ibxy + m1 -1]*bdif1) + (1-ex-x*eb)*(V2[j][k-1][ibx-1]*bdif1 + V2[j][k-1][ibx + m1 -1]*bdif);
-							if(vn>vmax) {
-								
+							if(vn>vmax) {								
 								b1max = b;								// Update values leding to maximum value
 								vmax = vn;
 								type = 1;
@@ -483,7 +487,7 @@ int main()
 					
 					// Value expression for V2(x,y) with interpolation
 					vn = (eb - (1 + x- b)*ex)*(V2[j][ibx -1][0]*bxdif1 + V2[j][ibx+m1-1][0]*bxdif) + b*(eb-ex)*(1+V1[j][ibx-1]*bxdif1 + V1[j][ibx+m1-1]*bxdif) + (1-(1+b)*eb)*(V2[j][ib-1][0]*bdif1 + V2[j][ib+m1-1][0]*bdif);
-			        if(vn>vmax) {
+					if(vn>vmax) {
 						vmax = vn;											// Update values leding to maximum value
 						bmax = b;	
 					}
@@ -505,15 +509,16 @@ int main()
 			}
 		}	
 
-	    FILE *out_file  = fopen("out_nfcfs.txt", "w+"); // read only 
+	    FILE *out_file2  = fopen("out_russian_2.txt", "w"); // read only 
         // test for files not existing. 
-   	    if (out_file == NULL) 
+   	    if (out_file2 == NULL) 
         {   
             printf("Error! Could not open file\n"); 
             exit(-1); // must include stdlib.h 
         } 
 		for(i=0;i<=192;i++) {
-			fprintf(out_file,"%lf, %lf, %lf\n", i*del, V1[1][i], alph[i]);
+			//printf("x = %f, V(x) = %f, A = %f\n", i*del, V1[1][i], alph[i]);
+			fprintf(out_file2,"%lf, %lf, %lf\n", i*del, V1[1][i], alph[i]);
 		}
 		
 		printf("%.10lf-%.10lf=%.10lf\n", xmax, xmin, xmax-xmin);
