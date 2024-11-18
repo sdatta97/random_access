@@ -374,7 +374,7 @@ int main()
 				x = (l-1)*del;
 				ex = exp(-x);
 				for(la = m2; la<=193; la = la+m1) {
-					a =(l+la-1)*del;
+					a =(l+la-2)*del;
 					ea = exp(-a);
                     eax = ea/ex;
 					eax2 = exp(-0.5*(a-x));

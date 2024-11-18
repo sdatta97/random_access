@@ -12,13 +12,13 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include<math.h>
 int main() 
 	{
-		double  V0[2], V1[2][193], V2[2][295][295], V11[2][193][193],V12[2][193][193], Vsub1[2][193][193];					// Initilization of value arrays
-		double alph[193],beta[295][295]; 								// Intiliation of decision arrays
+		double  V0[2], V1[2][193], V2[2][295][295], V11[2][193][193],V12[2][193][193], Vsub1[2][193][193], V122[2][193][193], V22[2][193][193];					// Initilization of value arrays
+		double alph[193],beta[295][295]; 								// Initialization of decision arrays
 
 		int NUM_ITERATIONS = 100;
              
 		double vmax, tmax1, tex, t, tmax, vn, vn1, vn2, tdif, tdif1, aux, xmin, xmax, x,dif,dif1;
-		double b1max, bxdif, bxdif1, exy, bmax, bmax1, xy, ex, exb, exyb, axdif, axdif1, a, ea, ea2, eax, eax2, amax1, amax, adif, adif1, b, y, ey, eb, eyb, bdif, bdif1;
+		double b1max, bxdif, bxdif1, exy, bmax, bmax1, xy, ex, ex2, exb, exyb, axdif, axdif1, a, ea, ea2, eax, eax2, amax1, amax, adif, adif1, b, y, ey, eb, eyb, bdif, bdif1;
 		
 		int i, j, k, l, m, n, it, ib, iby, lb, ia, iax, la,k1, kb, ibxy, ibx, kl;
 		
@@ -47,6 +47,8 @@ int main()
 				V12[1][j][k] = 0;
 				V11[1][j][k] = 0;
 				Vsub1[1][j][k] = 0;	
+				V122[1][j][k] = 0;
+				V22[1][j][k] = 0;
 			}
 		}
 	
@@ -220,26 +222,33 @@ int main()
 			    printf("Neg xmin: %f\n", xmin);
 			}
 
-			//Calculate Vsub1[0][y], V11[0][y] and V12[0][y], y>0
+			//Calculate Vsub1[0][y], V122[0][y/2][y], V22[0][y], V11[0][y] and V12[0][y], y>0
 			for(la = m2; la<=193; la = la+m1) {
 				a =(la-1)*del;
 				ea = exp(-a);
 				ea2 = exp(-0.5*a);
-				V12[i][0][la-1] = (ea2*(1-(1+a/2)*ea2)*V12[j][0][(la-1)/2] + 0.5*a*ea2*(1-ea2)*(1+V11[j][0][(la-1)/2])+ (1-(1+a/2)*ea2)*V12[j][0][(la-1)/2])/(1-(1+a)*ea);						// From value expression VS12(x)
+				V122[i][0][la-1] = 1+V2[j][(la-1)/2][(la-1)/2];
+				V22[i][0][la-1] = 0.5*(1+V12[j][0][la-1]+V22[j][0][la-1]);
+				V12[i][0][la-1] = (ea2*(1-(1+a/2)*ea2)*(1+V2[j][(la-1)/2][0]) + (1-ea2-(a/2)*ea)*V122[j][0][la-1])/(1-(1+a)*ea);						// From value expression VS12(x)
 				V11[i][0][la-1] = (a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][la-1])/(1-ea);
 				Vsub1[i][0][la-1] = (a*ea*(1+V1[j][0]) + (1-(1+a)*ea)*V12[j][0][la-1])/(1-ea);
 			}
 
-			//Calculate Vsub1[x][0], V11[x][0] and V12[x][0], x>0
+			//Calculate Vsub1[x][0], V122[x][0][0], V22[x][0], V11[x][0] and V12[x][0], x>0
 			for(l = m2; la<=193; l = l+m1) {
 				x =(l-1)*del;
 				ex = exp(-x);
+				ex2 = exp(-x/2);
+				V122[i][l-1][0] = (0.75*x*ex*(1+V2[j][0][0])+(1-(1+x)*ex)*V22[j][l-1][0])/(0.75*x*ex+(1-(1+x)*ex));
+				V22[i][l-1][0] = (ex2*(1-(1+x/2)*ex2)*V22[j][(l-1)/2][0]+(x/2)*ex2*(1-ex2)*(1+V12[j][(l-1)/2][0])+(1-(1+x/2)*ex2)*V22[j][(l-1)/2][0])/(1-(1+x)*ex);
 				Vsub1[i][l-1][0] = (1+V1[j][l-1]); 
-				V12[i][l-1][0] = 0.5*(V12[j][l-1][0]+1+V11[j][l-1][0]);						// From value expression VS12(x)
+				V12[i][l-1][0] = (0.25*x*ex*(1+V2[j][0][0])+(0.75*x*ex+1-(1+x)*ex)*V122[j][l-1][0])/(1-ex);						// From value expression VS12(x)
 				V11[i][l-1][0] = 1+V1[j][l-1];
 			}
 
-			V12[i][0][0] = 0.5*(V12[j][0][0]+1+V11[j][0][0]);						// From value expression VS12(0)
+			V122[i][0][0] = 1+V2[j][0][0];
+			V22[i][0][0] = 0.5*(1+V12[j][0][0]+V22[j][0][0]);
+			V12[i][0][0] = 0.25*(1+V2[j][0][0])+0.75*V122[j][0][0];						// From value expression VS12(0)
 			V11[i][0][0] = 1+V1[j][0];	
 			Vsub1[i][0][0] = 1+V1[j][0]; 	
 			//Calculate V1[x] and alph[x]
@@ -320,16 +329,19 @@ int main()
     			}
 			}	
 
-			//Calculate Vsub1[x][y], V11[x][y] and V12[x][y]
+			//Calculate Vsub1[x][y], V122[x][y/2][y], V22[x][y], V11[x][y] and V12[x][y]
 			for(l=m2; l<=193; l=l+m1) {		
 				x = (l-1)*del;
 				ex = exp(-x);
+				ex2 = exp(-0.5*x);
 				for(la = m2; la<=193; la = la+m1) {
-					a =(l+la-1)*del;
+					a =(l+la-2)*del;
 					ea = exp(-a);
                     eax = ea/ex;
 					eax2 = exp(-0.5*(a-x));
-					V12[i][l-1][la-1] = (eax2*(1-(1+(a-x)/2)*eax2)*V12[j][l-1][(la-1)/2] + 0.5*(a-x)*eax2*(1-eax2)*(1+V11[j][l-1][(la-1)/2])+  (1-(1+(a-x)/2)*eax2)*V12[j][l-1][(la-1)/2])/(1-(1+a-x)*eax);						// From value expression VS12(x)
+					V122[i][l-1][la-1] = (x*ex*(1-eax2-(a-x)/2)*(1+V2[j][(la-1)/2][(la-1)/2])+(1-(1+x)*ex)*(1-(1+a-x)*eax)*V22[j][l-1][la-1])/(x*ex*(1-eax2-(a-x)/2)+(1-(1+x)*ex)*(1-(1+a-x)*eax));
+					V22[i][l-1][la-1] = (ex2*(1-(1+x/2)*ex2)*V22[j][(l-1)/2][la-1]+0.5*x*ex2*(1-ex2)*(1+V12[j][(l-1)/2][la-1])+(1-(1+0.5*x)*ex2)*V22[j][(l-1)/2][la-1])/(1-ex);
+					V12[i][l-1][la-1] = (x*ex*eax2*(1-(1+0.5*(a-x))*eax2)*(1+V2[j][(la-1)/2][0])+ (x*ex*(1-eax2-0.5*(a-x)*eax)+(1-(1+x)*ex)*(1-(1+(a-x))*eax))*V122[j][l-1][la-1])/((1-ex)*(1-(1+a-x)*eax));						// From value expression VS12(x)
 					V11[i][l-1][la-1] = ((a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*V12[j][l-1][la-1])/(1-eax);
 					Vsub1[i][l-1][la-1] = ((1-(1+x)*ex)*eax*V2[j][l-1][0] + (1-ex)*(a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*(1-ex)*V12[j][l-1][la-1])/(1-ex-x*ea);
 				}
