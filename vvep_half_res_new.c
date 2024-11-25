@@ -138,7 +138,7 @@ int main()
 			    if (a<0) continue;
 				//if (a>0) break;
 				ea = exp(-a);
-				vn = ea*(1+V1[j][0]) + (1-ea)*V2[j][0][l-1];			// From value expression VS1(0)
+				vn = ea*(1+V0[j]) + (1-ea)*V2[j][0][l-1];			// From value expression VS1(0)
                 if(vn>vmax) {										// Update values leding to maximum value
 					amax = a;
 					vmax = vn;
@@ -299,7 +299,8 @@ int main()
 			//Calculate V2[0][0]
 		
 			V2[i][0][0] = (V2[j][0][0] + V1[j][0] + 1)/2;				// Update V2 for next iteration and limiting expression lim x-> 0 VS2(x,0)
-			
+			//V2[i][0][0] = 1+V1[j][0];
+
 			x = V2[i][0][0] - V2[j][0][0];								// Update change in value for state
 			
 			if(x<xmin) 	xmin = x;
@@ -407,13 +408,13 @@ int main()
                     else 
                         b=b1max;
 
-					//vn = 0;
+					vn = 0;
                 
                     // Value expression for V2(x,y)
-                    //vn = ey*(1-(1+x)*ex)*V2[j][k-1][0] + y*ey*(1-ex)*(1 + V1[j][k-1]) + (1-(1+y)*ey)*(1-ex)*V12[j][k-1][l-1];
-                    //if(vn>vmax) {									// Update values leding to maximum value
-                       // vmax = vn;
-                    //}
+                    vn = ey*(1-(1+x)*ex)*V2[j][k-1][0] + y*ey*(1-ex)*(1 + V1[j][k-1]) + (1-(1+y)*ey)*(1-ex)*V12[j][k-1][l-1];
+                    if(vn>vmax) {									// Update values leding to maximum value
+                       vmax = vn;
+                    }
 					V2[i][k-1][l-1] = vmax/(1 - ex - x*exy);				// Update V2 for next iteration
 					
 					xy = V2[i][k-1][l-1] - V2[j][k-1][l-1];					// Update change in value for state
