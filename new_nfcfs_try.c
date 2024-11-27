@@ -121,7 +121,7 @@ int main()
 				vmax = vn;
 
 				// Fine search for B[0][y]
-			    /*
+			    
 				for(b=delf1;b<y;b=b+delf1){
 				
 					eb = exp(-b);
@@ -148,7 +148,6 @@ int main()
 				}
 	
 				beta[0][l-1] = bmax;
-				*/
 				V2[i][0][l-1] = vmax;								// Update V2 for next iteration
 			    
 				x = V2[i][0][l-1] - V2[j][0][l-1];					// Update change in value for state
