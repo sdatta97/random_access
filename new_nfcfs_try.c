@@ -335,12 +335,12 @@ int main()
 				x = (l-1)*del;
 				ex = exp(-x);
 				ex2 = exp(-0.5*x);
-				for(la = m2; la<=193; la = la+m1) {
+				for(la = m2; la<=193-l; la = la+m1) {
 					a =(l+la-2)*del;
 					ea = exp(-a);
                     eax = ea/ex;
 					eax2 = exp(-0.5*(a-x));
-					V122[i][l-1][la-1] = (x*ex*(1-eax2-(a-x)/2)*(1+V2[j][(la-1)/2][(la-1)/2])+(1-(1+x)*ex)*(1-(1+a-x)*eax)*V22[j][l-1][la-1])/(x*ex*(1-eax2-0.5*(a-x)*eax)+(1-(1+x)*ex)*(1-(1+a-x)*eax));
+					V122[i][l-1][la-1] = (x*ex*(1-eax2-0.5*(a-x)*eax)*(1+V2[j][(la-1)/2][(la-1)/2])+(1-(1+x)*ex)*(1-(1+a-x)*eax)*V22[j][l-1][la-1])/(x*ex*(1-eax2-0.5*(a-x)*eax)+(1-(1+x)*ex)*(1-(1+a-x)*eax));
 					V22[i][l-1][la-1] = (ex2*(1-(1+x/2)*ex2)*V22[j][(l-1)/2][la-1]+0.5*x*ex2*(1-ex2)*(1+V12[j][(l-1)/2][la-1])+(1-(1+0.5*x)*ex2)*V22[j][(l-1)/2][la-1])/(1-(1+x)*ex);
 					V12[i][l-1][la-1] = (x*ex*eax2*(1-(1+0.5*(a-x))*eax2)*(1+V2[j][(la-1)/2][0])+ (x*ex*(1-eax2-0.5*(a-x)*eax)+(1-(1+x)*ex)*(1-(1+(a-x))*eax))*V122[j][l-1][la-1])/((1-ex)*(1-(1+a-x)*eax));						// From value expression VS12(x)
 					V11[i][l-1][la-1] = ((a-x)*eax*(1+V1[j][l-1]) + (1-(1+a-x)*eax)*V12[j][l-1][la-1])/(1-eax);
@@ -471,10 +471,8 @@ int main()
         			}
 				}
 			}
-		
-			b = delf1;	
-		
-			//Calculate v2[x][0] and B[x], x>0.192
+				
+			//Calculate v2[x][0] and B[x], x>0.96
 		    
 			for(l=194; l<=295; l++) {
 				
@@ -483,7 +481,7 @@ int main()
 				vn = 0;
 				vmax = vn;
 
-				for(b= b;b<=x;b=b+delf) {
+				for(b=b;b<=x;b=b+delf1) {
 		
 					eb = exp(-b);	// Generating values for linear interpolation
 					exb = ex/eb;
