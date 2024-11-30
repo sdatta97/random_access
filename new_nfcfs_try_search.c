@@ -13,12 +13,12 @@ Code, Compile, Run and Debug online from anywhere in world.
 int main() 
 	{
 		double  V0[2], V1[2][97], V2[2][148][148], V11[2][97][97],V12[2][97][97], Vsub1[2][97][97], V122[2][97][97][97], V22[2][97][97];					// Initilization of value arrays
-		double alph[97],beta[148][148]; 								// Initialization of decision arrays
+		float alph[97],beta[148][148]; 								// Initialization of decision arrays
 
 		int NUM_ITERATIONS = 100;
              
 		double vmax, tmax1, tex, t, tmax, vn, vn1, vn2, tdif, tdif1, aux, xmin, xmax, x,dif,dif1;
-		double b1max, bxdif, bxdif1, exy, bmax, bmax1, b2, b2max, xy, ex, ex2, exb, exyb, axdif, axdif1, a, ea, ea2, d, ed, eax, eax2, ead, eaxd, amax1, amax, dmax, adif, adif1, b, y, ey, eb, eyb, bdif, bdif1;
+		double b1max, bxdif, bxdif1, exy, bmax, bmax1, b2, xy, ex, ex2, exb, exyb, axdif, axdif1, a, ea, ea2, d, ed, eax, eax2, ead, eaxd, amax1, amax, adif, adif1, b, y, ey, eb, eyb, bdif, bdif1;
 		
 		int i, j, k, l, m, n, it, ib, iby, lb, lb2, ld, ia, iax, la,k1, kb, ibxy, ibx, kl;
 		
@@ -34,7 +34,6 @@ int main()
 
 		V1[0][0] = 0;												// Array initializations
 		V0[1] = 0;
-		
 		for(j=0; j<97; j++) V1[1][j] = 0;
 			
 		for(j=0; j<148; j++) {
@@ -228,7 +227,6 @@ int main()
 				a =(la-1)*del;
 				ea = exp(-a);
 				vmax = 0;
-				dmax = 0;
 				for(ld = m1; ld<=la; ld = ld + m1) {
 					d = (ld-1)*del;
 					ed = exp(-d);
@@ -237,7 +235,6 @@ int main()
 					vn = (ed*(1-(1+a-d)*ead)*(1+V2[j][la-ld][0]) + (1-ed-d*ea)*V122[j][0][la-1][ld-1])/(1-(1+a)*ea);
 					if (vn > vmax) {
 						vmax = vn;
-						dmax = d;
 					}
 				}
 				// ea2 = exp(-0.5*a);
@@ -256,8 +253,7 @@ int main()
 				V122[i][l-1][0][0] = (0.75*x*ex*(1+V2[j][0][0])+(1-(1+x)*ex)*V22[j][l-1][0])/(0.75*x*ex+(1-(1+x)*ex));
 				// V12[i][l-1][0] = (0.25*x*ex*(1+V2[j][0][0])+(0.75*x*ex+1-(1+x)*ex)*V122[j][l-1][0])/(1-ex);						// From value expression VS12(x)
 				V12[i][l-1][0] = (0.25*x*ex*(1+V2[j][0][0])+(0.75*x*ex+1-(1+x)*ex)*V122[j][l-1][0][0])/(1-ex);						// From value expression VS12(x)
-				//Calculate V22[x][0] and B2[x][0], B>=0
-				b2max = 0;
+				//Calculate V22[x][0], B2>=0
 				vmax = vn;
 				//Fine search for B2[x][0]
 				for(b2=delf1; b2<=x; b2=b2+delf1) { 
@@ -278,7 +274,6 @@ int main()
 					vn = (eb - (1+x-b2)*ex)*(V22[j][ibx -1][0]*bxdif1 + V22[j][ibx+m1-1][0]*bxdif) + b2*eb*(1-exb)*(1+V12[j][ibx-1][0]*bxdif1 + V12[j][ibx+m1-1][0]*bxdif) + (1-(1+b2)*eb)*(V22[j][ib-1][0]*bdif1 + V22[j][ib+m1-1][0]*bdif);
 					if(vn>vmax) {
 						vmax = vn;											// Update values leding to maximum value
-						b2max = b2;	
 					}
 				}
 			
@@ -390,7 +385,6 @@ int main()
 					a =(l+la-2)*del;
 					ea = exp(-a);
                     eax = ea/ex;
-					dmax = 0;
 					vmax = 0;
 					for(ld = m1; ld <=la; ld = ld+m1) {
 						d = (ld-1)*del;
@@ -401,7 +395,6 @@ int main()
 						vn = (x*ex*ed*(1-(1+a-x-d)*eaxd)*(1+V2[j][la-ld][0])+(x*ex*(1-ed-d*eax)+(1-(1+x)*ex)*(1-(1+a-x)*eax))*V122[j][l-1][la-1][ld-1])/((1-ex)*(1-(1+a-x)*eax));
 						if (vn > vmax) {
 							vmax = vn;
-							dmax = d;
 						}
 					}
 					// V12[i][l-1][la-1] = (x*ex*eax2*(1-(1+0.5*(a-x))*eax2)*(1+V2[j][(la-1)/2][0])+ (x*ex*(1-eax2-0.5*(a-x)*eax)+(1-(1+x)*ex)*(1-(1+(a-x))*eax))*V122[j][l-1][la-1])/((1-ex)*(1-(1+a-x)*eax));						// From value expression VS12(x)
@@ -409,7 +402,6 @@ int main()
 					//Calculate V22[x][y] and B2[x][y]
 					b2= 0;
 					vn = 0;
-					b2max = 0;
 					vmax = vn;
 					for(b2=b2+delf1; b2<=x; b2=b2+delf1) {
 						eb = exp(-b2);// Generating values for linear interpolation
@@ -425,7 +417,6 @@ int main()
 						vn = eb*(1 - (1+x-b2)*exb)*(V22[j][ibx-1][la-1]*dif + V22[j][ibx + m1 - 1][l-1]*dif1) + b2*eb*(1- exb)*(1 + V12[j][ibx-1][la-1]*dif + V12[j][ibx + m1 -1][la-1]*dif1) + (1-(1+b2)*eb)*(V22[j][ib-1][la-1]*dif1 + V22[j][ib + m1 - 1][la-1]*dif);
 						if(vn>vmax) {									// Update values leding to maximum value
 							vmax = vn;
-							b2max = b2;
 						}
 					}	
 					
